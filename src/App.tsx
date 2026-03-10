@@ -22,6 +22,7 @@ import ClaraAssistant from "./components/ClaraAssistant";
 import { StartupService } from "./services/startupService";
 import AuthPage from './components/Auth/AuthPage';
 import AdminDashboard from './components/Auth/AdminDashboard';
+import { applyTheme, getCurrentTheme } from './utils/themeManager';
 
 function App() {
   const [activePage, setActivePage] = useState(
@@ -137,14 +138,31 @@ function App() {
     };
   }, []);
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = async () => {
     setShowOnboarding(false);
+    
     // Refresh user info after onboarding
-    db.getPersonalInfo().then(info => {
-      if (info && info.name) {
-        setUserInfo({ name: info.name });
-      }
-    });
+    const info = await db.getPersonalInfo();
+    if (info && info.name) {
+      setUserInfo({ name: info.name });
+      
+      // Apply gray theme after onboarding completion
+      // IMPORTANT: Only apply dark mode if explicitly selected, not for "system"
+      const isDarkMode = info.theme_preference === 'dark';
+      
+      console.log('🎨 App: Applying gray theme after onboarding');
+      console.log('🎨 App: User theme preference:', info.theme_preference);
+      console.log('🎨 App: Dark mode will be:', isDarkMode);
+      
+      // Force apply gray theme immediately in LIGHT mode by default
+      applyTheme('gray', isDarkMode);
+      
+      // Apply again after a short delay to ensure it sticks
+      setTimeout(() => {
+        console.log('🎨 App: Re-applying gray theme to ensure it sticks');
+        applyTheme('gray', isDarkMode);
+      }, 200);
+    }
   };
 
   const handleSignIn = async (userData: any) => {
@@ -153,6 +171,18 @@ function App() {
     setUserInfo({ name: userData.name });
     setShowAuth(false);
     setShowOnboarding(false);
+    
+    // Apply gray theme after sign in if no custom theme is set
+    const currentTheme = getCurrentTheme();
+    // Only apply dark mode if explicitly selected, not for "system"
+    const isDarkMode = userData.personalInfo?.theme_preference === 'dark';
+    
+    if (currentTheme === 'gray' || !localStorage.getItem('e-audit-theme')) {
+      console.log('🎨 App: Applying gray theme after sign in with dark mode:', isDarkMode);
+      setTimeout(() => {
+        applyTheme('gray', isDarkMode);
+      }, 100);
+    }
   };
 
   const handleSignUp = () => {

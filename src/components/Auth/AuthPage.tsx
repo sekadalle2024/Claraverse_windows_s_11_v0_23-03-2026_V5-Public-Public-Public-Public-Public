@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Lock, Shield, Eye, EyeOff, LogIn, UserPlus } from 'lucide-react';
 import { db } from '../../db';
 import logo from '../../assets/logo.png';
+import { applyTheme, getCurrentTheme } from '../../utils/themeManager';
 
 interface AuthPageProps {
   onSignIn: (userData: any) => void;
@@ -82,6 +83,17 @@ const AuthPage: React.FC<AuthPageProps> = ({ onSignIn, onSignUp, onAdminAccess }
         // Verify the current user was set correctly
         const verifyCurrentUser = await db.getCurrentUser();
         console.log('🔍 AuthPage: Verification - current user ID:', verifyCurrentUser);
+        
+        // Apply gray theme if no theme is set, or keep existing theme
+        const currentTheme = getCurrentTheme();
+        // Only apply dark mode if explicitly selected, not for "system"
+        const isDarkMode = user.personalInfo?.theme_preference === 'dark';
+        
+        // If theme is default (gray), apply it in LIGHT mode by default
+        if (currentTheme === 'gray' || !localStorage.getItem('e-audit-theme')) {
+          console.log('🎨 AuthPage: Applying gray theme with dark mode:', isDarkMode);
+          applyTheme('gray', isDarkMode);
+        }
         
         onSignIn(user);
       } else {

@@ -15,7 +15,7 @@
     "start:all": "concurrently \"npm run dev\" \"npm run backend\"",
     "backend": "cd py_backend && python main.py",
     "backend:prod": "cd py_backend && python main.py",
-    "build": "vite build",
+    "build": "node --max-old-space-size=8192 ./node_modules/vite/bin/vite.js build",
     "build:prod": "vite build && npm run backend:prod",
     "preview:full": "concurrently \"npm run preview\" \"npm run backend\"",
     "lint": "eslint .",

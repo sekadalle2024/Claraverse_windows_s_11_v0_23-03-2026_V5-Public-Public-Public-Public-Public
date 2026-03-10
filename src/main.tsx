@@ -8,9 +8,10 @@ import './index.css';
 import './styles/animations.css'; // Import animations
 import './services/menuIntegration'; // Import menu integration service
 import './services/autoRestore'; // Import auto-restore service
+import { initializeTheme } from './utils/themeManager';
 
-// Set initial theme to light mode by default
-document.documentElement.classList.remove('dark');
+// Initialize theme (default to gray theme)
+initializeTheme();
 
 // Setup global error handlers for unhandled promise rejections and JS errors
 setupGlobalErrorHandlers();

@@ -30,7 +30,7 @@ const Onboarding = ({onComplete}: OnboardingProps) => {
         email: '',
         password: '',
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        theme_preference: 'dark' as 'light' | 'dark' | 'system', // Default to dark mode
+        theme_preference: 'system' as 'light' | 'dark' | 'system', // Default to system theme
         avatar_url: ''
     });
     const [animationClass, setAnimationClass] = useState('animate-fadeIn');
@@ -249,9 +249,10 @@ const Onboarding = ({onComplete}: OnboardingProps) => {
                     <div className="w-full px-4 pb-6 sm:pb-8 flex justify-center animate-fadeInUp delay-500 shrink-0">
                         <button
                             onClick={() => handleNextSection("setup")}
-                            className="px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-sakura-400 to-sakura-500 hover:from-sakura-500 hover:to-sakura-600 text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 hover:gap-3"
+                            className="px-6 sm:px-8 py-2.5 sm:py-3 bg-gradient-to-r from-[#ec4899] to-[#db2777] hover:from-[#db2777] hover:to-[#be185d] !text-white rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 hover:gap-3"
+                            style={{ backgroundColor: '#ec4899', color: '#ffffff' }}
                         >
-                            Get Started <Zap className="w-5 h-5"/>
+                            Démarrer <Zap className="w-5 h-5"/>
                         </button>
                     </div>
                 </div>

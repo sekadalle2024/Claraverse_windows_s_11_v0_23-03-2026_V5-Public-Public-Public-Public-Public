@@ -16,7 +16,7 @@ export const getCurrentTheme = (): ThemeType => {
   if (savedTheme === 'dark' || savedTheme === 'sakura' || savedTheme === 'gray' || savedTheme === 'white') {
     return savedTheme;
   }
-  return 'sakura'; // Thème par défaut
+  return 'gray'; // Thème par défaut
 };
 
 /**
