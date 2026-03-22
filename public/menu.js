@@ -120,7 +120,9 @@
             { text: "Modélisation tables", action: () => this.executeModelisation() },
             { text: "Modélisation table n8n", action: () => this.executeModelisationN8n(), shortcut: "Ctrl+M" },
             { text: "📊 Lead Balance", action: () => this.executeLeadBalance(), shortcut: "Ctrl+L" },
-            { text: "📥 Export Lead Balance", action: () => this.exportLeadBalanceToExcel(), shortcut: "Ctrl+Shift+L" }
+            { text: "📥 Export Lead Balance", action: () => this.exportLeadBalanceToExcel(), shortcut: "Ctrl+Shift+L" },
+            { text: "📊 États Financiers SYSCOHADA", action: () => this.executeEtatsFinanciers(), shortcut: "Ctrl+F" },
+            { text: "📥 Export États Financiers", action: () => this.exportEtatsFinanciersToExcel(), shortcut: "Ctrl+Shift+F" }
           ]
         },
         {

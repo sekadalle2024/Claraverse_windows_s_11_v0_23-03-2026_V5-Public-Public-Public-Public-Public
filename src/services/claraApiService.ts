@@ -40,6 +40,7 @@ export class ClaraApiService {
   private readonly SENTINEL_DATABASE = "__INTERNAL__DATABASE__";
   private readonly SENTINEL_NOTIFICATION = "__INTERNAL__NOTIFICATION__";
   private readonly SENTINEL_LEAD_BALANCE = "__INTERNAL__LEAD_BALANCE__";
+  private readonly SENTINEL_ETAT_FIN = "__INTERNAL__ETAT_FIN__";
 
   /**
    * Router n8n – Switch-case JavaScript
@@ -107,6 +108,9 @@ export class ClaraApiService {
     } else if (msg.includes("Recos_revision")) {
       // Case 23 (Recos_revision)
       routeKey = "recos_revision";
+    } else if (msg.includes("Etat fin")) {
+      // Case 24 (États Financiers SYSCOHADA)
+      routeKey = "etat_fin";
     } else if (msg.includes("Design")) {
       routeKey = "design";
     } else if (msg.includes("n8n_doc")) {
@@ -224,6 +228,11 @@ export class ClaraApiService {
       case "recos_revision":
         console.log("🔀 Router → Case 23 : recos_revision");
         return "https://j17rkv4c.rpcld.cc/webhook/recos_revision";
+
+      // ── Case 24 : États Financiers SYSCOHADA ─────────────────────────────
+      case "etat_fin":
+        console.log("🔀 Router → Case 24 : etat_fin (traitement local avec upload fichier)");
+        return this.SENTINEL_ETAT_FIN;
 
       // ── Case 1 : défaut / Standard ──────────────────────────────────────
       case "default":
@@ -924,6 +933,33 @@ export class ClaraApiService {
             model: "local",
             type: "auto_trigger_upload",
             trigger_type: "lead_balance"
+          },
+        };
+      }
+
+      // ── Case 24 : États Financiers SYSCOHADA – Upload fichier Excel et traitement ──────
+      if (resolvedEndpoint === this.SENTINEL_ETAT_FIN) {
+        console.log("📊 [États Financiers] Démarrage du processus - Déclenchement automatique");
+        
+        // Créer une table unicolonne avec entête "Etat_fin"
+        // Le script EtatFinAutoTrigger.js détectera cette table automatiquement
+        // et ouvrira le dialogue de sélection de fichier
+        const initialContent =
+          "| Etat_fin |\n" +
+          "|----------|\n" +
+          "| 📂 Sélectionnez votre fichier Balance Excel... |";
+        
+        // Retourner la table initiale
+        // La logique d'upload sera gérée automatiquement par EtatFinAutoTrigger.js
+        return {
+          id: `${Date.now()}-etat-fin`,
+          role: "assistant",
+          content: initialContent,
+          timestamp: new Date(),
+          metadata: { 
+            model: "local",
+            type: "auto_trigger_upload",
+            trigger_type: "etat_fin"
           },
         };
       }
