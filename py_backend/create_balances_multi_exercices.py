@@ -23,20 +23,40 @@ def create_balance_variation(base_df, year_offset, variation_pct=0.15):
     """Crée une variation de la balance pour un exercice différent"""
     df = base_df.copy()
     
+    # Fonction pour convertir et appliquer variation
+    def apply_variation(val, pct):
+        try:
+            # Convertir en float
+            num = float(str(val).replace(' ', '').replace(',', '.'))
+            # Appliquer variation
+            varied = num * (1 + random.uniform(-pct, pct))
+            # Retourner au format string avec espaces
+            return f"{varied:,.2f}".replace(',', ' ')
+        except:
+            return val
+    
     # Appliquer des variations aléatoires sur les montants
     for col in df.columns:
-        if 'solde' in col.lower() or 'debit' in col.lower() or 'credit' in col.lower():
-            if df[col].dtype in ['float64', 'int64']:
-                # Variation aléatoire entre -variation_pct et +variation_pct
-                variation = df[col] * (1 + random.uniform(-variation_pct, variation_pct))
-                df[col] = variation.round(2)
+        col_lower = str(col).lower()
+        if 'solde' in col_lower or ('débit' in col_lower and 'ant' not in col_lower) or ('crédit' in col_lower and 'ant' not in col_lower):
+            print(f"  Variation sur colonne: {col}")
+            df[col] = df[col].apply(lambda x: apply_variation(x, variation_pct))
     
     return df
 
 # Créer les 3 balances
+print("\n" + "="*80)
+print("CRÉATION DES BALANCES AVEC VARIATIONS")
+print("="*80)
+
+print("\nBalance N (2024) - Données originales")
 balance_n = balance_demo.copy()
-balance_n1 = create_balance_variation(balance_demo, -1, 0.10)  # -10% à +10%
-balance_n2 = create_balance_variation(balance_demo, -2, 0.20)  # -20% à +20%
+
+print("\nBalance N-1 (2023) - Variation de -10% à +10%")
+balance_n1 = create_balance_variation(balance_demo, -1, 0.10)
+
+print("\nBalance N-2 (2022) - Variation de -20% à +20%")
+balance_n2 = create_balance_variation(balance_demo, -2, 0.20)
 
 # Créer le fichier Excel avec 3 onglets
 output_file = 'BALANCES_N_N1_N2.xlsx'

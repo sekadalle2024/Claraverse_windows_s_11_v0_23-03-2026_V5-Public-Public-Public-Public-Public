@@ -1489,11 +1489,10 @@ async def process_excel(request: ExcelUploadRequest):
             except Exception as e:
                 logger.warning(f"⚠️ Erreur chargement balance N-1: {e}")
         
-        # TOUJOURS utiliser le format liasse officielle (avec N et N-1)
-        # Si pas de N-1, dupliquer N pour avoir les 2 colonnes
+        # Vérifier si on a vraiment une balance N-1 différente
+        # Si pas de N-1, on ne duplique PAS - on laisse None pour avoir des montants à 0
         if balance_n1_df is None:
-            balance_n1_df = balance_df.copy()
-            logger.info("📋 Balance N-1 non trouvée, utilisation de N pour les 2 colonnes")
+            logger.info("📋 Balance N-1 non trouvée, colonne N-1 sera vide")
         
         # FORMAT LIASSE OFFICIELLE (avec N et N-1)
         logger.info("📋 Utilisation du format liasse officielle (2 colonnes)")
@@ -1542,21 +1541,13 @@ async def process_excel(request: ExcelUploadRequest):
         
         # Calculer les annexes complètes au format liasse
         try:
-            # Séparer les données N et N-1 pour les annexes
-            bilan_actif_n = [p for p in results_liasse['bilan_actif']]
-            bilan_actif_n1 = [p for p in results_liasse['bilan_actif']]
-            bilan_passif_n = [p for p in results_liasse['bilan_passif']]
-            bilan_passif_n1 = [p for p in results_liasse['bilan_passif']]
-            compte_resultat_n = [p for p in results_liasse['compte_resultat']]
-            compte_resultat_n1 = [p for p in results_liasse['compte_resultat']]
-            
             annexes_data = calculer_annexes_completes(
-                bilan_actif_n,
-                bilan_actif_n1,
-                bilan_passif_n,
-                bilan_passif_n1,
-                compte_resultat_n,
-                compte_resultat_n1
+                results_liasse['bilan_actif'],
+                results_liasse['bilan_actif'],
+                results_liasse['bilan_passif'],
+                results_liasse['bilan_passif'],
+                results_liasse['compte_resultat'],
+                results_liasse['compte_resultat']
             )
             results_liasse['annexes'] = annexes_data
             logger.info("✅ Annexes complètes calculées avec succès")
